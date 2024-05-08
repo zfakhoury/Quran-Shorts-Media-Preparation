@@ -1,8 +1,10 @@
 import random, os, shutil, json, requests, subprocess
+from dotenv import load_dotenv
 from PIL import Image, ImageOps
 from tabulate import tabulate
 from quran_reciter_data import reciters, ayat_count
 
+load_dotenv()
 
 def download_audio(reciter_id, surah_number, ayah_number):
     # Load recitation data from recitation.js
@@ -40,16 +42,49 @@ def invert_image(surat, ayat):
     print(f"{surat}_{ayat}.png")
 
 
-def random_bg():
-    bg_path = "/Users/m3evo/YT Media/Background Videos/"
-    random_vid = random.choice(os.listdir(bg_path))
-    return bg_path + random_vid, random_vid
+def download_pexels_video():
+    random_page = random.randint(1, 10)  # Assuming there are 10 pages
+    url = f"https://api.pexels.com/videos/search?query=landscape&page={random_page}"
+
+    headers = {
+        'Authorization': os.environ['PEXELS_TOKEN']
+    }
+
+    response = requests.get(url, headers=headers)
+    data = response.json()
+
+    videos = data.get('videos', [])
+    if videos:
+        selected_video = random.choice(videos)
+        download_link = selected_video['video_files'][0]['link']
+        
+        # Download the video
+        folder_path = "Users/m3evo/YT Media/Temp Media/"
+        video_name = os.path.join(folder_path, f"{selected_video['id']}.mp4")
+
+        with open(video_name, 'wb') as video_file:
+            video_file.write(requests.get(download_link).content)
+            print(f"Downloaded video: {video_name}")
+    else:
+        print("No videos found on this page.")
+
+
+def surat_calligraphy(surat):
+    if 1 < surat < 9:
+        surat = f'00{surat}'
+    elif 10 < surat < 99:
+        surat = f'0{surat}'
+    
+    folder_path = "/Users/m3evo/YT Media/Surah Calligraphy/"
+    calligraphy = f"{surat}.png"
+
+    return folder_path + calligraphy, calligraphy
 
 
 def valid_interval(surat, first_ayat, last_ayat, reciter_id):
     state = False
     if str(reciter_id) in reciters:
-        if 1 <= surat <= 144:
+        if 1 <= surat <= 114:
             if 1 <= first_ayat <= ayat_count[surat-1] and 1 <= last_ayat <= ayat_count[surat-1]:
                 state = True
     return state
@@ -79,10 +114,10 @@ if valid_interval(surat, first_ayat, last_ayat, reciter_id):
         invert_image(surat, first_ayat + i)
         download_audio(reciter_id, surat, first_ayat + i)
 
-    random_vid_path, random_vid = random_bg()
-    shutil.copyfile(random_vid_path, f"/Users/m3evo/YT Media/Temp Media/{random_vid}")
+    download_pexels_video()
+    calligraphy_path, calligraphy = surat_calligraphy(surat)
+    shutil.copyfile(calligraphy_path, f"/Users/m3evo/YT Media/Temp Media/{calligraphy}")
     subprocess.run(['open', "/Users/m3evo/YT Media/Temp Media/"])
-    shutil.copyfile(f"Users/m3evo/YT Media/Surat Calligraphy/{surat}.png", f"/Users/m3evo/YT Media/Temp Media")
 
 else:
     print('Incorrect input.')
