@@ -8,7 +8,7 @@ load_dotenv()
 
 def download_audio(reciter_id, surah_number, ayah_number):
     # Load recitation data from recitation.js
-    with open('/Users/m3evo/Development/Python/quran-shorts-media-preparation/recitations.js', 'r', encoding='utf-8') as file:
+    with open('/Users/m3evo/Development/Python/Quran-Shorts-Media-Preparation/recitations.json', 'r', encoding='utf-8') as file:
         recitation_data = file.read()
 
     # Parse JSON data
