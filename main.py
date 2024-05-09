@@ -8,7 +8,7 @@ load_dotenv()
 
 def download_audio(reciter_id, surah_number, ayah_number):
     # Load recitation data from recitation.js
-    with open('/Users/m3evo/Development/Python/Utilities/recitations.js', 'r', encoding='utf-8') as file:
+    with open('/Users/m3evo/Development/Python/quran-shorts-media-preparation/recitations.js', 'r', encoding='utf-8') as file:
         recitation_data = file.read()
 
     # Parse JSON data
@@ -58,13 +58,13 @@ def download_pexels_video():
         selected_video = random.choice(videos)
         download_link = selected_video['video_files'][0]['link']
         
-        # Download the video
-        folder_path = "Users/m3evo/YT Media/Temp Media/"
-        video_name = os.path.join(folder_path, f"{selected_video['id']}.mp4")
+        folder_path = "/Users/m3evo/YT Media/Temp Media/"
+        video_path = os.path.join(folder_path, f"{selected_video['id']}.mp4")
 
-        with open(video_name, 'wb') as video_file:
+        # Download the video
+        with open(video_path, 'wb') as video_file:
             video_file.write(requests.get(download_link).content)
-            print(f"Downloaded video: {video_name}")
+            print(f"Background video: {selected_video['id']}.mp4")
     else:
         print("No videos found on this page.")
 
