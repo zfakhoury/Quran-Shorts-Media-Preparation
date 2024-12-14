@@ -56,21 +56,25 @@ def download_pexels_video():
     videos = data.get('videos', [])
     if videos:
         selected_video = random.choice(videos)
-        download_link = selected_video['video_files'][0]['link']
+
+        for i in range(0, len(selected_video)):
+            if selected_video['video_files'][i]['width'] >= 1920:
+                download_link = selected_video['video_files'][i]['link']
+                break
         
         folder_path = "/Users/m3evo/YT Media/Temp Media/"
-        video_path = os.path.join(folder_path, f"{selected_video['id']}.mp4")
+        video_path = os.path.join(folder_path, f"{selected_video['video_files'][i]['id']}.mp4")
 
         # Download the video
         with open(video_path, 'wb') as video_file:
             video_file.write(requests.get(download_link).content)
-            print(f"Background video: {selected_video['id']}.mp4")
+            print(f"Background video: {selected_video['video_files'][i]['id']}.mp4")
     else:
         print("No videos found on this page.")
 
 
 def surat_calligraphy(surat):
-    if 1 < surat < 9:
+    if 1 <= surat <= 9:
         surat = f'00{surat}'
     elif 10 < surat < 99:
         surat = f'0{surat}'
@@ -83,11 +87,24 @@ def surat_calligraphy(surat):
 
 def valid_interval(surat, first_ayat, last_ayat, reciter_id):
     state = False
+    error_msg = ""
+
     if str(reciter_id) in reciters:
         if 1 <= surat <= 114:
-            if 1 <= first_ayat <= ayat_count[surat-1] and 1 <= last_ayat <= ayat_count[surat-1]:
-                state = True
-    return state
+            if 1 <= first_ayat <= ayat_count[surat-1]:
+                if 1 <= last_ayat <= ayat_count[surat-1]:
+                    state = True
+                else:
+                    error_msg = "Invalid last ayat number."
+            else:
+                error_msg = "Invalid first ayat number."
+        else:
+            error_msg = "Invalid surat number."
+    else:
+        error_msg = "Invalid reciter ID."
+
+
+    return state, error_msg
 
 
 def construct_reciters_table():
@@ -108,7 +125,9 @@ surat = int(input("Surat: "))
 first_ayat = int(input("First ayat: "))
 last_ayat = int(input("Last ayat: "))
 
-if valid_interval(surat, first_ayat, last_ayat, reciter_id):
+verification = valid_interval(surat, first_ayat, last_ayat, reciter_id)
+
+if verification[0]:
     for i in range(0, last_ayat - first_ayat + 1):
         print("")
         invert_image(surat, first_ayat + i)
@@ -120,4 +139,4 @@ if valid_interval(surat, first_ayat, last_ayat, reciter_id):
     subprocess.run(['open', "/Users/m3evo/YT Media/Temp Media/"])
 
 else:
-    print('Incorrect input.')
+    print(f'\n{verification[1]}')
