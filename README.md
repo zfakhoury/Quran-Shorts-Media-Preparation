@@ -2,6 +2,26 @@
 
 This repository showcases my workflow to automate the preparation of media files for my Quran shorts on <https://www.youtube.com/@islamic-vibes-33/shorts>
 
+## Dependencies
+
+Before running the scripts, ensure you have the following dependencies installed:
+
+- Python 3.x
+- `requests`
+- `Pillow`
+- `beautifulsoup4`
+- `python-dotenv`
+- `tabulate`
+- `inkscape`
+
+You can install the required Python libraries using pip:
+
+```sh
+pip install requests Pillow beautifulsoup4 python-dotenv tabulate
+```
+
+Inkscape is a standalone application and needs to be installed separately. You can download and install it from the [Inkscape website](https://inkscape.org).
+
 ## Preparing prerequisite media - required for initial setup only
 
 Before we run `main.py`, we need to have the images locally on our machine for the script to run correctly.
