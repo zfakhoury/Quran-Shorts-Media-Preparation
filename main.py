@@ -8,7 +8,7 @@ load_dotenv()
 
 def download_audio(reciter_id, surah_number, ayah_number):
     # Load recitation data from recitation.js
-    with open('/Users/m3evo/Development/Python/Quran-Shorts-Media-Preparation/recitations.json', 'r', encoding='utf-8') as file:
+    with open('recitations.json', 'r', encoding='utf-8') as file:
         recitation_data = file.read()
 
     # Parse JSON data
@@ -25,7 +25,7 @@ def download_audio(reciter_id, surah_number, ayah_number):
     response = requests.get(url)
     if response.status_code == 200:
         # Save the audio file
-        file_path = os.path.join("/Users/m3evo/YT Media/Temp Media/", filename)
+        file_path = os.path.join("saved_media", filename)
         with open(file_path, 'wb') as file:
             file.write(response.content)
         print(f"{filename}")
@@ -34,11 +34,11 @@ def download_audio(reciter_id, surah_number, ayah_number):
 
 
 def invert_image(surat, ayat):
-    image = Image.open(f"/Users/m3evo/YT Media/Ayats/{surat}_{ayat}.png").convert('RGBA')
+    image = Image.open(f"ayats/{surat}_{ayat}.png").convert('RGBA')
     r, g, b, a = image.split()
     r, g, b = map(ImageOps.invert, (r, g, b))
     inverted_image = Image.merge(image.mode, (r, g, b, a))
-    inverted_image.save(f"/Users/m3evo/YT Media/Temp Media/{surat}_{ayat}.png", 'PNG')
+    inverted_image.save(f"saved_media/{surat}_{ayat}.png", 'PNG')
     print(f"{surat}_{ayat}.png")
 
 
@@ -62,7 +62,7 @@ def download_pexels_video():
                 download_link = selected_video['video_files'][i]['link']
                 break
         
-        folder_path = "/Users/m3evo/YT Media/Temp Media/"
+        folder_path = "saved_media/"
         video_path = os.path.join(folder_path, f"{selected_video['video_files'][i]['id']}.mp4")
 
         # Download the video
@@ -79,7 +79,7 @@ def surat_calligraphy(surat):
     elif 10 < surat < 99:
         surat = f'0{surat}'
     
-    folder_path = "/Users/m3evo/YT Media/Surah Calligraphy/"
+    folder_path = "surah_calligraphy/"
     calligraphy = f"{surat}.png"
 
     return folder_path + calligraphy, calligraphy
@@ -135,8 +135,8 @@ if verification[0]:
 
     download_pexels_video()
     calligraphy_path, calligraphy = surat_calligraphy(surat)
-    shutil.copyfile(calligraphy_path, f"/Users/m3evo/YT Media/Temp Media/{calligraphy}")
-    subprocess.run(['open', "/Users/m3evo/YT Media/Temp Media/"])
+    shutil.copyfile(calligraphy_path, f"saved_media/{calligraphy}")
+    subprocess.run(['open', "saved_media/"])
 
 else:
     print(f'\n{verification[1]}')
